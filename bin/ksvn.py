@@ -176,15 +176,18 @@ def svn_freeze(paths, params):
 
 def svn_info(paths, params):
     """..."""
+    colors = [
+        ('branches', 'red'),
+        ('trunk', 'cyan'),
+        ('STABLE', 'green'),
+    ]
+
     client = pysvn.Client()
 
     for i in paths:
         url = get_relative_url(client.info(i))
-
-        url = url.replace('branches', termcolor.colored('branches', 'red'))
-        url = url.replace('trunk', termcolor.colored('trunk', 'cyan'))
-        url = url.replace('STABLE', termcolor.colored('STABLE', 'green'))
-
+        for j in colors:
+            url = url.replace(j[0], termcolor.colored(j[0], j[1]))
         print '[{}] {}'.format(i, url)
 
     return 0
