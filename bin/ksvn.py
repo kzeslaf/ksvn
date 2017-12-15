@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 
@@ -72,11 +72,11 @@ def list_working_copies(path):
     """..."""
     result = []
 
-    for i in os.listdir(path):
-        p = os.path.join(path, i)
-        p = os.path.join(p, '.svn')
+    exists = os.path.exists
+    join = os.path.join
 
-        if os.path.exists(p):
+    for i in os.listdir(path):
+        if exists(join(join(path, i), '.svn')):
             result.append(i)
 
     return result
@@ -100,10 +100,14 @@ def is_dirty(status):
 
 def is_working_copy(path):
     """..."""
+    abspath = os.path.abspath
+    exists = os.path.exists
+    join = os.path.join
+
     while path != '' and path != '/' and path[1:] != ":\\":
-        if os.path.exists(os.path.join(path, '.svn')):
+        if exists(join(path, '.svn')):
             return True
-        path = os.path.abspath(os.path.join(path, '..'))
+        path = abspath(join(path, '..'))
     return False
 
 
