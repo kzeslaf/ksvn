@@ -211,7 +211,8 @@ def svn_switch(paths, params):
     try:
         from_ = params[0]
         to = params[1]
-    except Exception:
+    except IndexError:
+        print 'Invalid params for svn switch command: {}'.format(params)
         return RES_INVARG
 
     client = pysvn.Client()
@@ -290,7 +291,8 @@ def main():
             if sys.argv[1] in i[0]:
                 return i[1](sorted(list_working_copies(cwd)), sys.argv[2:])
 
-    raise Exception('Unknown command: {}'.format(sys.argv[1:]))
+    print 'Unknown command: {}'.format(sys.argv[1:])
+    return RES_INVARG
 
 
 #######################
@@ -299,8 +301,4 @@ def main():
 
 
 if __name__ == '__main__':
-    try:
-        sys.exit(main())
-    except Exception as exc:
-        print exc
-        sys.exit(RES_ERROR)
+    sys.exit(main())
