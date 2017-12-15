@@ -238,7 +238,7 @@ def svn_switch_wc(path_list, params):
     """..."""
     for i, v in enumerate(params):
         if re.match(r'\d+', v):
-            params[i] = '^/branches/feature/' + v
+            params[i] = '^/branches/' + v
 
     return os.system('svn switch ' + ' '.join(params))
 
