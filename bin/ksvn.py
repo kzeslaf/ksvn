@@ -15,10 +15,7 @@ Commands outside working copy:
     - freeze
 
 TODO:
-    - make the script work for python3
     - better output
-    - 'clear' asks user for confirmation
-    - dodać polecenie 'stat'
 """
 
 import os
@@ -27,10 +24,7 @@ import shutil
 import sys
 import traceback
 
-# TODO: ...
 import pysvn
-
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "../third-party/termcolor"))
 import termcolor
 
 
