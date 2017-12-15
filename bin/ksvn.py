@@ -56,7 +56,8 @@ def get_relative_url(info):
 def get_unversioned_files(status):
     """Return list of unversioned and ignored files."""
     assert isinstance(status, list)
-    if status: assert isinstance(status[0], pysvn.PysvnStatus)
+    if status:
+        assert isinstance(status[0], pysvn.PysvnStatus)
 
     result = []
     sk = pysvn.wc_status_kind
@@ -85,7 +86,8 @@ def list_working_copies(path):
 def is_dirty(status):
     """..."""
     assert isinstance(status, list)
-    if status: assert isinstance(status[0], pysvn.PysvnStatus)
+    if status:
+        assert isinstance(status[0], pysvn.PysvnStatus)
 
     sk = pysvn.wc_status_kind
     ok_states = [sk.unversioned, sk.normal, sk.ignored]
@@ -149,7 +151,8 @@ def svn_clear(path_list, params):
         for f in files:
             print(f)
 
-        proceed = 'y' if PARAM_FORCE in params else raw_input('--> Proceed [y/N]: ')
+        proceed = 'y' if PARAM_FORCE in params else raw_input(
+            '--> Proceed [y/N]: ')
 
         if proceed in ['y', 'Y', 'yes']:
             remove(files)
@@ -197,7 +200,8 @@ def svn_status(path_list, params):
                 dirty = True
                 break
 
-        print('{} {}'.format(i, termcolor.colored('Dirty', 'red') if dirty else 'Clean'))
+        print('{} {}'.format(i, termcolor.colored(
+            'Dirty', 'red') if dirty else 'Clean'))
 
     return 0
 
@@ -219,7 +223,8 @@ def svn_switch(path_list, params):
             if is_dirty(client.status(i)):
                 print('{} is Dirty, omitting ...'.format(i))
 
-            res = os.system('( echo Directory: [{0}]; cd {0}; svn switch {1} )'.format(i, url.replace(from_, to)))
+            res = os.system('( echo Directory: [{0}]; cd {0}; svn switch {1} )'.format(
+                i, url.replace(from_, to)))
             if res != 0:
                 error = True
 
@@ -240,7 +245,8 @@ def svn_switch_wc(path_list, params):
 def svn_update(path_list, params):
     """..."""
     for i in path_list:
-        res = os.system('( echo Directory: [{0}]; cd {0}; svn update )'.format(i))
+        res = os.system(
+            '( echo Directory: [{0}]; cd {0}; svn update )'.format(i))
         if res != 0:
             return res
     return 0
