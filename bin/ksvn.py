@@ -18,11 +18,11 @@ TODO:
     - better output
 """
 
+
 import os
 import re
 import shutil
 import sys
-import traceback
 
 import pysvn
 import termcolor
@@ -110,11 +110,11 @@ def is_working_copy(path):
 
 def remove(files):
     """..."""
-    for f in files:
-        if os.path.isdir(f):
-            shutil.rmtree(f)
+    for i in files:
+        if os.path.isdir(i):
+            shutil.rmtree(i)
         else:
-            os.remove(f)
+            os.remove(i)
 
 
 ########################
@@ -122,7 +122,7 @@ def remove(files):
 ########################
 
 
-def svn_clear(path_list, params):
+def svn_clear(paths, params):
     """Remove unversioned/ignored items in working copy.
 
     Function does not remove following files:
@@ -133,98 +133,97 @@ def svn_clear(path_list, params):
         --all - remove all files (for example: *.user)
         --force - don't require user confirmation
     """
-    PARAM_ALL = '--all'
-    PARAM_FORCE = '--force'
+    param_all = '--all'
+    param_force = '--force'
 
     client = pysvn.Client()
 
-    for i in path_list:
+    for i in paths:
         files = get_unversioned_files(client.status(i))
 
-        if PARAM_ALL not in params:
+        if param_all not in params:
             files = [v for v in files if not v.endswith('.user')]
             files = [v for v in files if not v.endswith('.idea')]
 
         if not files:
             continue
 
-        for f in files:
-            print(f)
+        for j in files:
+            print j
 
-        proceed = 'y' if PARAM_FORCE in params else raw_input(
+        proceed = 'y' if param_force in params else raw_input(
             '--> Proceed [y/N]: ')
 
         if proceed in ['y', 'Y', 'yes']:
             remove(files)
 
 
-def svn_freeze(path_list, params):
+def svn_freeze(paths, params):
     """..."""
     client = pysvn.Client()
     result = []
 
-    for i in path_list:
+    for i in paths:
         info = client.info(i)
         result.append([i, info.url, info.revision])
 
     for i in sorted(result):
-        print(i)
+        print i
 
 
-def svn_info(path_list, params):
+def svn_info(paths, params):
     """..."""
     client = pysvn.Client()
 
-    for i in path_list:
+    for i in paths:
         url = get_relative_url(client.info(i))
 
         url = url.replace('branches', termcolor.colored('branches', 'red'))
         url = url.replace('trunk', termcolor.colored('trunk', 'cyan'))
         url = url.replace('STABLE', termcolor.colored('STABLE', 'green'))
 
-        print('[{}] {}'.format(i, url))
+        print '[{}] {}'.format(i, url)
 
     return 0
 
 
-def svn_status(path_list, params):
+def svn_status(paths, params):
     """..."""
     client = pysvn.Client()
 
-    for i in path_list:
-        dirty = False
-        status = client.status(i)
-
-        for j in status:
-            if is_dirty(status):
-                dirty = True
-                break
-
-        print('{} {}'.format(i, termcolor.colored(
-            'Dirty', 'red') if dirty else 'Clean'))
+    for i in paths:
+        dirty = is_dirty(client.status(i))
+        print '{} {}'.format(
+            i, termcolor.colored('Dirty', 'red') if dirty else 'Clean'
+        )
 
     return 0
 
 
-def svn_switch(path_list, params):
+def svn_switch(paths, params):
     """..."""
     try:
         from_ = params[0]
         to = params[1]
-    except:
+    except Exception:
         return RES_INVARG
 
     client = pysvn.Client()
     error = False
 
-    for i in path_list:
+    for i in paths:
         url = get_relative_url(client.info(i))
+
         if url.startswith(from_):
             if is_dirty(client.status(i)):
-                print('{} is Dirty, omitting ...'.format(i))
+                print '{} is Dirty, omitting ...'.format(i)
 
-            res = os.system('( echo Directory: [{0}]; cd {0}; svn switch {1} )'.format(
-                i, url.replace(from_, to)))
+            res = os.system(
+                '( echo Directory: [{0}]; cd {0}; svn switch {1} )'.format(
+                    i, url.replace(from_, to)
+                )
+            )
+
             if res != 0:
                 error = True
 
@@ -233,20 +232,20 @@ def svn_switch(path_list, params):
     return RES_OK
 
 
-def svn_switch_wc(path_list, params):
+def svn_switch_wc(paths, params):
     """..."""
-    for i, v in enumerate(params):
-        if re.match(r'\d+', v):
-            params[i] = '^/branches/' + v
-
+    for key, val in enumerate(params):
+        if re.match(r'\d+', val):
+            params[key] = '^/branches/' + val
     return os.system('svn switch ' + ' '.join(params))
 
 
-def svn_update(path_list, params):
+def svn_update(paths, params):
     """..."""
-    for i in path_list:
+    for i in paths:
         res = os.system(
-            '( echo Directory: [{0}]; cd {0}; svn update )'.format(i))
+            '( echo Directory: [{0}]; cd {0}; svn update )'.format(i)
+        )
         if res != 0:
             return res
     return 0
@@ -311,11 +310,7 @@ def main():
 
 if __name__ == '__main__':
     try:
-        res = main()
-    except Exception as e:
-        print(e)
-        traceback.print_exc()
+        sys.exit(main())
+    except Exception as exc:
+        print exc
         sys.exit(RES_ERROR)
-
-    if res != RES_OK:
-        sys.exit(res)
