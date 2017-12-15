@@ -3,8 +3,10 @@
 
 
 """
-ksvn.py - decorator for svn tools allowing for simultaneous
-operations on many working copies.
+ksvn.py
+
+Decorator for svn tools allowing for simultaneous operations on many working
+copies.
 
 Additional commands when inside working copy:
     - clear: remove all unversioned files
@@ -13,9 +15,6 @@ Commands outside working copy:
     - info
     - update
     - freeze
-
-TODO:
-    - better output
 """
 
 
@@ -260,17 +259,11 @@ def main():
     """..."""
     cwd = os.getcwd()
 
-    #
-    #
-    #
     wc_functions = [
         (['clear'], svn_clear),
         (['switch'], svn_switch_wc),
     ]
 
-    #
-    #
-    #
     functions = [
         (['clear'], svn_clear),
         (['freeze'], svn_freeze),
@@ -280,25 +273,15 @@ def main():
         (['switch'], svn_switch),
     ]
 
-    #
-    #
-    #
     if is_working_copy(cwd):
-
         for i in wc_functions:
             if sys.argv[1] in i[0]:
                 return i[1]('.', sys.argv[2:])
-
         return os.system('svn ' + ' '.join(sys.argv[1:]))
-
-    #
-    #
-    #
-    wc_list = sorted(list_working_copies(cwd))
-
-    for i in functions:
-        if sys.argv[1] in i[0]:
-            return i[1](wc_list, sys.argv[2:])
+    else:
+        for i in functions:
+            if sys.argv[1] in i[0]:
+                return i[1](sorted(list_working_copies(cwd)), sys.argv[2:])
 
     raise Exception('Unknown command: {}'.format(sys.argv[1:]))
 
