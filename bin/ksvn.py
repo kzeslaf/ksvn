@@ -8,13 +8,17 @@ ksvn.py
 Decorator for svn tools allowing for simultaneous operations on many working
 copies.
 
+Additional commandline options:
+    * --no-abbrevs - ...
+
 Additional commands when inside working copy:
-    - clear: remove all unversioned files
+    * clear: remove all unversioned files
 
 Commands outside working copy:
-    - info
-    - update
-    - freeze
+    * clear: remove all unversioned files
+    * info
+    * update
+    * freeze
 """
 
 
@@ -109,6 +113,37 @@ def is_working_copy(path):
             return True
         path = abspath(join(path, '..'))
     return False
+
+
+def parse_cmd_line(cmd_line):
+    """Return parsed cmd line options as list.
+
+    Function expands abbreviations (if there is no --no-abbrevs options).
+    Currently expanded abbreviations:
+        * trunk -> ^/trunk
+        * STABLE -> ^/tags/STABLE
+        * \\d+ -> ^/branches/\\d+
+
+    Example:
+        ksvn copy trunk 203 -> ksvn copy ^/trunk ^/branches/203
+    """
+    no_abbrevs = "--no-abbrevs"
+
+    if no_abbrevs in cmd_line:
+        sys.argv.remove(no_abbrevs)
+        return sys.argv
+
+    result = []
+    for i in sys.argv:
+        if i == "trunk":
+            result.append("^/trunk")
+        elif i == "STABLE":
+            result.append("^/tags/STABLE")
+        elif re.match(r"\d+", i):
+            result.append("^/branches/" + i)
+        else:
+            result.append(i)
+    return result
 
 
 def remove(files):
@@ -239,14 +274,6 @@ def svn_switch(paths, params):
     return RES_OK
 
 
-def svn_switch_wc(paths, params):
-    """..."""
-    for key, val in enumerate(params):
-        if re.match(r'\d+', val):
-            params[key] = '^/branches/' + val
-    return os.system('svn switch ' + ' '.join(params))
-
-
 def svn_update(paths, params):
     """..."""
     for i in paths:
@@ -265,11 +292,11 @@ def svn_update(paths, params):
 
 def main():
     """..."""
+    sys.argv = parse_cmd_line(sys.argv)
     cwd = os.getcwd()
 
     wc_functions = [
         (['clear'], svn_clear),
-        (['switch'], svn_switch_wc),
     ]
 
     functions = [
