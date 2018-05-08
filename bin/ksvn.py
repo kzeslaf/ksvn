@@ -165,6 +165,7 @@ def svn_clear(paths, params):
 
     Function does not remove following files:
         - .idea
+        - .vscode
         - *.user
 
     Additional params:
@@ -180,8 +181,9 @@ def svn_clear(paths, params):
         files = get_unversioned_files(client.status(i))
 
         if param_all not in params:
-            files = [v for v in files if not v.endswith('.user')]
             files = [v for v in files if not v.endswith('.idea')]
+            files = [v for v in files if not v.endswith('.vscode')]
+            files = [v for v in files if not v.endswith('.user')]
 
         if not files:
             continue
