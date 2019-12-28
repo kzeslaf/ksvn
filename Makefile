@@ -3,12 +3,11 @@ mkfile_path := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 .PHONY: env clean install uninstall
 
 all:
-	@echo "usage:\n\tmake env|install|uninstall|clean"
+	@echo "usage:\n\tmake env|clean|install|uninstall"
 
 env:
-	python3 -m venv $(mkfile_path).env
+	python3 -m venv --system-site-packages $(mkfile_path).env
 	( . $(mkfile_path).env/bin/activate ; pip install --upgrade pip; pip install -r requirements.txt ; deactivate )
-	( cd $(mkfile_path).env/lib/python3.5/site-packages ; ln -sfT /usr/lib/python3/dist-packages/pysvn pysvn )
 
 clean:
 	rm -rI $(mkfile_path).env

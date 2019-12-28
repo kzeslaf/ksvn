@@ -1,1 +1,7 @@
 termcolor
+
+# dev
+pep8
+autopep8
+rope
+pylint
