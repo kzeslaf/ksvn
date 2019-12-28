@@ -7,7 +7,7 @@ all:
 
 env:
 	python3 -m venv --system-site-packages $(mkfile_path).env
-	( . $(mkfile_path).env/bin/activate ; pip install --upgrade pip; pip install -r requirements.txt ; deactivate )
+	. $(mkfile_path).env/bin/activate && pip install --upgrade pip && pip install -r requirements.txt
 
 clean:
 	rm -rI $(mkfile_path).env
