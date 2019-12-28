@@ -1,11 +1,20 @@
 mkfile_path := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
+.PHONY: env clean install uninstall
 
-install:
-	virtualenv --no-site-packages $(mkfile_path).env
-	( . $(mkfile_path).env/bin/activate ; pip install -r requirements.txt ; deactivate )
-	( cd $(mkfile_path).env/lib/python2.7/site-packages ; ln -sfT /usr/lib/python2.7/dist-packages/pysvn pysvn )
+all:
+	@echo "usage:\n\tmake env|install|uninstall|clean"
+
+env:
+	python3 -m venv $(mkfile_path).env
+	( . $(mkfile_path).env/bin/activate ; pip install --upgrade pip; pip install -r requirements.txt ; deactivate )
+	( cd $(mkfile_path).env/lib/python3.5/site-packages ; ln -sfT /usr/lib/python3/dist-packages/pysvn pysvn )
+
+clean:
+	rm -rI $(mkfile_path).env
+
+install: env
 	ln -sf $(mkfile_path)bin/ksvn.sh ~/bin/ksvn
 
 uninstall:
-	rm -rI $(mkfile_path).env ~/bin/ksvn
+	rm -rI ~/bin/ksvn

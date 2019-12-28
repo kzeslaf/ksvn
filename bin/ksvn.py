@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 
@@ -189,7 +189,7 @@ def svn_clear(paths, params):
             continue
 
         for j in files:
-            print j
+            print(j)
 
         proceed = 'y' if param_force in params else raw_input(
             '--> Proceed [y/N]: ')
@@ -208,7 +208,7 @@ def svn_freeze(paths, params):
         result.append([i, info.url, info.revision])
 
     for i in sorted(result):
-        print i
+        print(i)
 
 
 def svn_info(paths, params):
@@ -225,7 +225,7 @@ def svn_info(paths, params):
         url = get_relative_url(client.info(i))
         for j in colors:
             url = url.replace(j[0], termcolor.colored(j[0], j[1]))
-        print '[{}] {}'.format(i, url)
+        print('[{}] {}'.format(i, url))
 
     return 0
 
@@ -236,8 +236,10 @@ def svn_status(paths, params):
 
     for i in paths:
         dirty = is_dirty(client.status(i))
-        print '{} {}'.format(
-            i, termcolor.colored('Dirty', 'red') if dirty else 'Clean'
+        print(
+            '{} {}'.format(
+                i, termcolor.colored('Dirty', 'red') if dirty else 'Clean'
+            )
         )
 
     return 0
@@ -249,7 +251,7 @@ def svn_switch(paths, params):
         from_ = params[0]
         to = params[1]
     except IndexError:
-        print 'Invalid params for svn switch command: {}'.format(params)
+        print('Invalid params for svn switch command: {}'.format(params))
         return RES_INVARG
 
     client = pysvn.Client()
@@ -260,7 +262,7 @@ def svn_switch(paths, params):
 
         if url.startswith(from_):
             if is_dirty(client.status(i)):
-                print '{} is Dirty, omitting ...'.format(i)
+                print('{} is Dirty, omitting ...'.format(i))
 
             res = os.system(
                 '( echo Directory: [{0}]; cd {0}; svn switch {1} )'.format(
@@ -320,7 +322,7 @@ def main():
             if sys.argv[1] in i[0]:
                 return i[1](sorted(list_working_copies(cwd)), sys.argv[2:])
 
-    print 'Unknown command: {}'.format(sys.argv[1:])
+    print('Unknown command: {}'.format(sys.argv[1:]))
     return RES_INVARG
 
 

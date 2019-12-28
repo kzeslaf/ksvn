@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "~/.pyenv/python2/bin/python2",
+    "python.pythonPath": ".env/bin/python",
     "cSpell.words": [
         "getcwd",
         "invarg",
