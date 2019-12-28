@@ -191,7 +191,7 @@ def svn_clear(paths, params):
         for j in files:
             print(j)
 
-        proceed = 'y' if param_force in params else raw_input(
+        proceed = 'y' if param_force in params else input(
             '--> Proceed [y/N]: ')
 
         if proceed in ['y', 'Y', 'yes']:
